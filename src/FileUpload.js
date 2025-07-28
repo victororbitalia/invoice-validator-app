@@ -28,7 +28,7 @@ const FileUpload = ({ onSuccess, onError, setLoading }) => {
       return;
     }
 
-    const uploadUrl = '/webhook/a774c7b0-84ba-4092-b43c-43279a0104a3';
+    const uploadUrl = 'https://orbitalia-n8n.zw2zr7.easypanel.host/webhook/a774c7b0-84ba-4092-b43c-43279a0104a3';
     const formData = new FormData();
     formData.append('file', selectedFile);
 

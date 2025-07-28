@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ValidationForm = ({ initialData, workflowId, onReset, onError }) => {
+const ValidationForm = ({ initialData, workflowId, fileForPreview, onReset, onError }) => {
   const [formData, setFormData] = useState(initialData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionMessage, setSubmissionMessage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
     setFormData(initialData);
   }, [initialData]);
+
+  useEffect(() => {
+    if (fileForPreview) {
+      const url = URL.createObjectURL(fileForPreview);
+      setPreviewUrl(url);
+
+      // Limpiar la URL del objeto cuando el componente se desmonte
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [fileForPreview]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -57,45 +68,62 @@ const ValidationForm = ({ initialData, workflowId, onReset, onError }) => {
   }
 
   return (
-    <div>
-      <h2 className="text-center mb-4">Fase 2: Verificación y Validación</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="row g-3">
-          {Object.entries(formData).map(([key, value]) => (
-            <div className="col-md-6" key={key}>
-              <div className="form-floating">
-                <input
-                  type="text"
-                  className="form-control"
-                  id={key}
-                  name={key}
-                  value={value || ''}
-                  onChange={handleChange}
-                  placeholder={key.replace(/_/g, ' ')}
-                />
-                <label htmlFor={key} className="text-capitalize">{key.replace(/_/g, ' ')}</label>
+    <div className="row">
+      {/* Columna del Formulario */}
+      <div className="col-lg-6">
+        <h2 className="text-center mb-4">Fase 2: Verificación y Validación</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="row g-3">
+            {Object.entries(formData).map(([key, value]) => (
+              <div className="col-md-6" key={key}>
+                <div className="form-floating">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id={key}
+                    name={key}
+                    value={value || ''}
+                    onChange={handleChange}
+                    placeholder={key.replace(/_/g, ' ')}
+                  />
+                  <label htmlFor={key} className="text-capitalize">{key.replace(/_/g, ' ')}</label>
+                </div>
               </div>
+            ))}
+          </div>
+          <div className="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+            <button type="button" className="btn btn-outline-secondary" onClick={onReset} disabled={isSubmitting}>
+              <i className="bi bi-arrow-left me-2"></i>Empezar de Nuevo
+            </button>
+            <button type="submit" className="btn btn-success btn-lg" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Validando...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-check-lg me-2"></i>VALIDAR
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Columna del Visor de Documentos */}
+      <div className="col-lg-6">
+        <div className="document-preview-container sticky-top">
+          <h4 className="text-center mb-3">Documento Original</h4>
+          {previewUrl ? (
+            <embed src={previewUrl} type={fileForPreview.type} width="100%" height="600px" />
+          ) : (
+            <div className="text-center p-5">
+              <p>No hay documento para previsualizar.</p>
             </div>
-          ))}
+          )}
         </div>
-        <div className="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
-          <button type="button" className="btn btn-outline-secondary" onClick={onReset} disabled={isSubmitting}>
-            <i className="bi bi-arrow-left me-2"></i>Empezar de Nuevo
-          </button>
-          <button type="submit" className="btn btn-success btn-lg" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Validando...
-              </>
-            ) : (
-              <>
-                <i className="bi bi-check-lg me-2"></i>VALIDAR
-              </>
-            )}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };

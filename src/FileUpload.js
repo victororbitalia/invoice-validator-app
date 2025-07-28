@@ -45,7 +45,7 @@ const FileUpload = ({ onSuccess, onError, setLoading }) => {
       const responseData = response.data.json;
 
       if (responseData && responseData.wf_id) {
-        onSuccess(responseData);
+        onSuccess(responseData, selectedFile);
       } else {
         onError('La respuesta del servidor no es válida o no contiene "wf_id".');
         console.error("Respuesta inválida:", response.data);

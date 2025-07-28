@@ -24,11 +24,8 @@ const ValidationForm = ({ initialData, workflowId, onReset, onError }) => {
     onError(null);
 
     const payload = { json: formData };
-    const relativeUrl = new URL(workflowId).pathname;
-
     try {
-      const validationUrl = `https://orbitalia-n8n.zw2zr7.easypanel.host${relativeUrl}`;
-      await axios.post(validationUrl, payload);
+      await axios.post(workflowId, payload);
       setSubmissionMessage('¡Validación completada con éxito!');
       setTimeout(() => {
         onReset();

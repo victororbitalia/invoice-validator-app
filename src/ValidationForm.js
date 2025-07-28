@@ -24,6 +24,7 @@ const ValidationForm = ({ initialData, workflowId, onReset, onError }) => {
     onError(null);
 
     const payload = { json: formData };
+
     try {
       await axios.post(workflowId, payload);
       setSubmissionMessage('¡Validación completada con éxito!');

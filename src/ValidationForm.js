@@ -26,7 +26,11 @@ const ValidationForm = ({ initialData, workflowId, onReset, onError }) => {
     const payload = { json: formData };
 
     try {
-      await axios.post(workflowId, payload);
+      // Extrae la ruta de la URL completa y antepone /api/ para usar el proxy
+      const relativeUrl = new URL(workflowId).pathname;
+      const proxyUrl = `/api${relativeUrl}`;
+
+      await axios.post(proxyUrl, payload);
       setSubmissionMessage('¡Validación completada con éxito!');
       setTimeout(() => {
         onReset();
